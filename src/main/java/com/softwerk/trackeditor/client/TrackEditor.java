@@ -1,28 +1,13 @@
 package com.softwerk.trackeditor.client;
 
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.Maps;
-import com.google.gwt.maps.client.overlay.GeoXmlLoadCallback;
-import com.google.gwt.maps.client.overlay.GeoXmlOverlay;
-import com.google.gwt.user.client.ui.*;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.DecoratorPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 
 public class TrackEditor implements EntryPoint {
-    private static String KML_DEMO_URI = "http://gmaps-samples.googlecode.com/svn/trunk/ggeoxml/cta.kml";
-    private final DecoratorPanel decorator = new DecoratorPanel();
-    private MapWidget map;
-    private GeoXmlOverlay geoXml = null;
-    private HorizontalPanel buttonPanel = new HorizontalPanel();
-    private VerticalPanel mainPanel = new VerticalPanel();
-
-    /**
-     * The message displayed to the user when the server cannot be reached or
-     * returns an error.
-     */
-    private static final String SERVER_ERROR = "An error occurred while "
-            + "attempting to contact the server. Please check your network "
-            + "connection and try again.";
+    private MapEdit mapEdit = new MapEdit();
+    private DecoratorPanel decorator = new DecoratorPanel();
 
     /**
      * Create a remote service proxy to talk to the server-side Greeting service.
@@ -30,43 +15,16 @@ public class TrackEditor implements EntryPoint {
     private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
     public void onModuleLoad() {
-        Button button = new Button("Button");
-        buttonPanel.add(button);
-        mainPanel.add(buttonPanel);
-        decorator.add(mainPanel);
+        if (!mapEdit.isMapLoaded()) {
+            return;
+        }
 
-        Maps.loadMapsApi("AIzaSyDhEb7O5rSjmuHneI6TH8FVx6vdcjqzlQQ", "2", false, new Runnable() {
-            public void run() {
-                buildMap();
-
-                GeoXmlOverlay.load(KML_DEMO_URI, new GeoXmlLoadCallback() {
-                    @Override
-                    public void onFailure(String s, Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(String s, GeoXmlOverlay geoXmlOverlay) {
-                        if (geoXml != null) {
-                            return;
-                        }
-                        geoXml = geoXmlOverlay;
-                        map.addOverlay(geoXml);
-                    }
-                });
-            }
-        });
-
-        RootPanel.get("content").add(decorator);
-//        oldInit();
+        loadContext();
     }
 
-    private void buildMap() {
-        map = new MapWidget();
-        map.setSize("700px", "500px");
-        map.setUIToDefault();
-        mainPanel.add(map);
-        map.addStyleName("mapStyle");
+    private void loadContext() {
+        decorator.add(mapEdit.loadMap());
+        RootPanel.get("content").add(decorator);
     }
 
 //    private void oldInit() {
