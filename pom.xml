@@ -64,6 +64,32 @@
             <!--<scope>system</scope>-->
             <!--<systemPath>/home/viktor/IdeaProjects/TrackEditor/src/main/webapp/WEB-INF/lib/gwt-maps.jar</systemPath>-->
         </dependency>
+
+        <!-- Deploying to APP ENGINE -->
+        <!--<dependency>-->
+            <!--<groupId>com.google</groupId>-->
+            <!--<artifactId>appengine-tools</artifactId>-->
+            <!--<version>1.6.2</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.google</groupId>-->
+            <!--<artifactId>appengine-local-runtime-shared</artifactId>-->
+            <!--<version>1.6.2</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.google</groupId>-->
+            <!--<artifactId>appengine-sdk-1.6.2-api</artifactId>-->
+            <!--<version>1.6.2</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.datanucleus</groupId>-->
+            <!--<artifactId>datanucleus-appengine</artifactId>-->
+            <!--<version>1.0.10.final</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

@@ -2,6 +2,7 @@ package com.softwerk.trackeditor.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.maps.client.MapUIOptions;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.geom.LatLng;
@@ -34,11 +35,10 @@ public class MapEdit extends Composite implements ClickHandler {
     public Widget loadMap() {
         map = new MapWidget(LatLng.newInstance(48.859068, 2.344894), 12);
         map.setSize("700px", "500px");
-//        MapUIOptions options = map.getDefaultUI();
-//        options.setDoubleClick(false);
-        map.setUIToDefault();
-        map.setDoubleClickZoom(false);
-
+        MapUIOptions options = map.getDefaultUI();
+        options.setDoubleClick(false);
+        options.setLargeMapControl3d(true);
+        map.setUI(options);
 
         mainPanel.add(makeToolBar());
         mainPanel.add(map);
