@@ -7,6 +7,7 @@ import com.google.gwt.maps.client.control.Control;
 import com.google.gwt.maps.client.control.ControlAnchor;
 import com.google.gwt.maps.client.control.ControlPosition;
 import com.google.gwt.maps.client.event.MapClickHandler;
+import com.google.gwt.maps.client.event.MapMouseMoveHandler;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.user.client.ui.*;
@@ -15,7 +16,9 @@ import com.softwerk.trackeditor.client.MapEdit;
 public class AddMenuControl extends Control.CustomControl implements ClickHandler {
     private Button addMarkerButton;
     private MapClickHandler mapClickHandler;
+    private MapMouseMoveHandler mapMouseMoveHandler;
     private MapEdit mapEdit;
+    private Marker marker;
 
     protected AddMenuControl(MapEdit mapEdit) {
         super(new ControlPosition(ControlAnchor.BOTTOM_LEFT, 200, 7));
@@ -52,16 +55,30 @@ public class AddMenuControl extends Control.CustomControl implements ClickHandle
                     @Override
                     public void onClick(MapClickEvent mapClickEvent) {
                         mapEdit.getMap().removeMapClickHandler(mapClickHandler);
+                        mapEdit.getMap().removeMapMouseMoveHandler(mapMouseMoveHandler);
+                        marker = null;
+                    }
+                };
+            }
 
-                        MarkerOptions opt = MarkerOptions.newInstance();
-                        opt.setDraggable(true);
-                        Marker marker = new Marker(mapClickEvent.getLatLng(), opt);
-                        mapEdit.addOverlay(marker);
+            // Moving marker on the map
+            if (mapMouseMoveHandler == null) {
+                mapMouseMoveHandler = new MapMouseMoveHandler() {
+                    @Override
+                    public void onMouseMove(MapMouseMoveEvent mapMouseMoveEvent) {
+                        if (marker == null) {
+                            MarkerOptions opt = MarkerOptions.newInstance();
+                            opt.setDraggable(true);
+                            marker = new Marker(mapMouseMoveEvent.getLatLng(), opt);
+                            mapEdit.addOverlay(marker);
+                        }
+                        marker.setPoint(mapMouseMoveEvent.getLatLng());
                     }
                 };
             }
 
             mapEdit.getMap().addMapClickHandler(mapClickHandler);
+            mapEdit.getMap().addMapMouseMoveHandler(mapMouseMoveHandler);
         }
     }
 }
