@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapEdit extends Composite implements ClickHandler {
+    // temporary
+    private static int next = 0;
+
     private MapWidget map;
     private Button loadButton = new Button("Load");
     private Button saveButton = new Button("Save");
@@ -23,7 +26,6 @@ public class MapEdit extends Composite implements ClickHandler {
     private VerticalPanel mainPanel = new VerticalPanel();
 
     // For editing
-    private boolean editable = false;
     private Map<String, Overlay> overlays = new HashMap<String, Overlay>();
     private Marker marker;
 
@@ -46,21 +48,25 @@ public class MapEdit extends Composite implements ClickHandler {
         LatLng latLng = LatLng.newInstance(48.859068, 2.344894);
         map = new MapWidget(latLng, 12);
         map.setSize("700px", "500px");
-        MapUIOptions options = map.getDefaultUI();
-        options.setDoubleClick(false);
-        options.setLargeMapControl3d(true);
-        map.setUI(options);
-        map.addControl(new EditMapControl(overlays));
+        MapUIOptions mapUIOptions = map.getDefaultUI();
+        mapUIOptions.setDoubleClick(false);
+        mapUIOptions.setLargeMapControl3d(true);
+        map.setUI(mapUIOptions);
+        map.addControl(new EditMapControl(this));
 
         MarkerOptions opt = MarkerOptions.newInstance();
         opt.setDraggable(true);
         marker = new Marker(latLng, opt);
-        map.addOverlay(marker);
-        overlays.put("", marker);
+        addOverlay(marker);
 
         mainPanel.add(makeToolBar());
         mainPanel.add(map);
         return mainPanel;
+    }
+
+    public void addOverlay(Overlay overlay) {
+        map.addOverlay(overlay);
+        overlays.put("overlay" + getNext(), overlay);
     }
 
     private Widget makeToolBar() {
@@ -95,26 +101,16 @@ public class MapEdit extends Composite implements ClickHandler {
             Window.alert("Pressed Export button");
         }
     }
-}
 
-//        Maps.loadMapsApi("AIzaSyDhEb7O5rSjmuHneI6TH8FVx6vdcjqzlQQ", "2", false, new Runnable() {
-//            public void run() {
-//                buildMap();
-//
-//                GeoXmlOverlay.load(KML_DEMO_URI, new GeoXmlLoadCallback() {
-//                    @Override
-//                    public void onFailure(String s, Throwable throwable) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(String s, GeoXmlOverlay geoXmlOverlay) {
-//                        if (geoXml != null) {
-//                            return;
-//                        }
-//                        geoXml = geoXmlOverlay;
-//                        map.addOverlay(geoXml);
-//                    }
-//                });
-//            }
-//        });
+    public MapWidget getMap() {
+        return map;
+    }
+
+    public Map<String, Overlay> getOverlays() {
+        return overlays;
+    }
+    
+    private static int getNext() {
+        return ++next;
+    }
+}
