@@ -1,5 +1,7 @@
 package com.softwerk.trackeditor.client.overlay;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
@@ -7,28 +9,37 @@ import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.maps.client.overlay.Overlay;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.softwerk.trackeditor.client.MapEdit;
 
 public class MarkerInfo extends Overlay {
     private final Marker marker;
     private String name;
-    private InfoWindowContent content;
+    private String content;
+    private InfoWindowContent infoWindowContent;
     private MapWidget map;
+    private MapEdit mapEdit;
 
-    public MarkerInfo(LatLng point) {
+    public MarkerInfo(MapEdit mapEdit, LatLng point) {
+        this(mapEdit, point, "", null);
+    }
+
+    public MarkerInfo(MapEdit mapEdit, LatLng point, String name) {
+        this(mapEdit, point, name, null);
+    }
+
+    public MarkerInfo(MapEdit mapEdit, LatLng point, String name, String content) {
+        this.name = name;
+        this.content = content;
+        this.mapEdit = mapEdit;
+
         MarkerOptions options = MarkerOptions.newInstance();
         options.setDraggable(true);
         this.marker = new Marker(point, options);
         this.marker.addMarkerClickHandler(createMarkerClickHandler());
-    }
-
-    public MarkerInfo(LatLng point, String name) {
-        this(point);
-        this.name = name;
-    }
-
-    public MarkerInfo(LatLng point, String name, InfoWindowContent content) {
-        this(point, name);
         this.content = content;
+        createContent();
     }
 
     public Marker getMarker() {
@@ -41,19 +52,21 @@ public class MarkerInfo extends Overlay {
 
     public void setName(String name) {
         this.name = name;
+        createContent();
     }
 
-    public InfoWindowContent getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(InfoWindowContent content) {
+    public void setContent(String content) {
         this.content = content;
+        createContent();
     }
 
     @Override
     protected Overlay copy() {
-        return new MarkerInfo(marker.getLatLng(), name, content);
+        return new MarkerInfo(mapEdit, marker.getLatLng(), name, content);
     }
 
     @Override
@@ -78,10 +91,27 @@ public class MarkerInfo extends Overlay {
         return new MarkerClickHandler() {
             @Override
             public void onClick(MarkerClickEvent markerClickEvent) {
-//                if (!map.getInfoWindow().isVisible()) {
-                    map.getInfoWindow().open(marker, new InfoWindowContent("Marker #<b>" + name + "</b>"));
-//                }
+                if (!map.getInfoWindow().isVisible()) {
+                    map.getInfoWindow().open(marker, infoWindowContent);
+                }
             }
         };
+    }
+
+    // Create InfoWindowContent to show under the marker
+    private void createContent() {
+        final VerticalPanel panel = new VerticalPanel();
+        final Label deleteLabel = new Label("Delete");
+        panel.add(new Label("Marker #<b>" + name + "</b>"));
+        panel.add(deleteLabel);
+
+        deleteLabel.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                mapEdit.removeOverlay(MarkerInfo.this);
+            }
+        });
+
+        infoWindowContent = new InfoWindowContent(panel);
     }
 }

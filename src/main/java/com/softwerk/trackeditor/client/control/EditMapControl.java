@@ -50,7 +50,7 @@ public class EditMapControl extends Control.CustomControl {
                 }
 
                 // Enable/Disable editing mode
-                setEditable(editButton.getValue());
+                mapEdit.setEditable(editButton.getValue());
             }
         });
 
@@ -58,12 +58,6 @@ public class EditMapControl extends Control.CustomControl {
         return container;
     }
 
-    private void setEditable(boolean isEditing) {
-        for (Overlay overlay : mapEdit.getOverlays().values()) {
-            if (overlay instanceof MarkerInfo) {
-                MarkerInfo markerInfo = (MarkerInfo) overlay;
-                markerInfo.getMarker().setDraggingEnabled(isEditing);
-            }
-        }
-    }
+
+
 }

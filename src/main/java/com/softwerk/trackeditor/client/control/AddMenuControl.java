@@ -68,7 +68,7 @@ public class AddMenuControl extends Control.CustomControl implements ClickHandle
                     @Override
                     public void onMouseMove(MapMouseMoveEvent mapMouseMoveEvent) {
                         if (markerInfo == null) {
-                            markerInfo = new MarkerInfo(map.getCenter(), MapEdit.getNext() + "");
+                            markerInfo = new MarkerInfo(mapEdit, map.getCenter(), MapEdit.getNext() + "");
                             mapEdit.addOverlay(markerInfo);
                         }
                         markerInfo.getMarker().setPoint(mapMouseMoveEvent.getLatLng());

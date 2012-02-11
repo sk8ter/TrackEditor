@@ -10,9 +10,9 @@ import com.google.gwt.maps.client.overlay.*;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.softwerk.trackeditor.client.control.EditMapControl;
+import com.softwerk.trackeditor.client.overlay.MarkerInfo;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class MapEdit extends Composite implements ClickHandler {
     // temporary
@@ -26,8 +26,7 @@ public class MapEdit extends Composite implements ClickHandler {
     private VerticalPanel mainPanel = new VerticalPanel();
 
     // For editing
-    private Map<String, Overlay> overlays = new HashMap<String, Overlay>();
-    private Marker marker;
+    private ArrayList<Overlay> overlays = new ArrayList<Overlay>();
 
     public boolean isMapLoaded() {
         if (!Maps.isLoaded()) {
@@ -54,11 +53,6 @@ public class MapEdit extends Composite implements ClickHandler {
         map.setUI(mapUIOptions);
         map.addControl(new EditMapControl(this));
 
-        MarkerOptions opt = MarkerOptions.newInstance();
-        opt.setDraggable(true);
-        marker = new Marker(latLng, opt);
-        addOverlay(marker);
-
         mainPanel.add(makeToolBar());
         mainPanel.add(map);
         return mainPanel;
@@ -66,7 +60,12 @@ public class MapEdit extends Composite implements ClickHandler {
 
     public void addOverlay(Overlay overlay) {
         map.addOverlay(overlay);
-        overlays.put("overlay" + getNext(), overlay);
+        overlays.add(overlay);
+    }
+
+    public void removeOverlay(Overlay overlay) {
+        map.removeOverlay(overlay);
+        overlays.remove(overlay);
     }
 
     private Widget makeToolBar() {
@@ -106,11 +105,20 @@ public class MapEdit extends Composite implements ClickHandler {
         return map;
     }
 
-    public Map<String, Overlay> getOverlays() {
+    public ArrayList<Overlay> getOverlays() {
         return overlays;
     }
-    
+
     public static int getNext() {
         return ++next;
+    }
+
+    public void setEditable(boolean isEditing) {
+        for (Overlay overlay : overlays) {
+            if (overlay instanceof MarkerInfo) {
+                MarkerInfo markerInfo = (MarkerInfo) overlay;
+                markerInfo.getMarker().setDraggingEnabled(isEditing);
+            }
+        }
     }
 }
