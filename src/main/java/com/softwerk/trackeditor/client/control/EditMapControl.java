@@ -6,13 +6,13 @@ import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.control.Control;
 import com.google.gwt.maps.client.control.ControlAnchor;
 import com.google.gwt.maps.client.control.ControlPosition;
-import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.Overlay;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.softwerk.trackeditor.client.MapEdit;
+import com.softwerk.trackeditor.client.overlay.MarkerInfo;
 
 import java.util.Map;
 
@@ -60,9 +60,9 @@ public class EditMapControl extends Control.CustomControl {
 
     private void setEditable(boolean isEditing) {
         for (Overlay overlay : mapEdit.getOverlays().values()) {
-            if (overlay instanceof Marker) {
-                Marker marker = (Marker) overlay;
-                marker.setDraggingEnabled(isEditing);
+            if (overlay instanceof MarkerInfo) {
+                MarkerInfo markerInfo = (MarkerInfo) overlay;
+                markerInfo.getMarker().setDraggingEnabled(isEditing);
             }
         }
     }

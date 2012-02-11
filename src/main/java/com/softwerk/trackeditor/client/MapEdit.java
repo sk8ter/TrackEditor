@@ -110,7 +110,7 @@ public class MapEdit extends Composite implements ClickHandler {
         return overlays;
     }
     
-    private static int getNext() {
+    public static int getNext() {
         return ++next;
     }
 }
